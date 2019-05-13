@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "61952355560",
+    "firebase_url": "https://moveon-5b060.firebaseio.com",
+    "project_id": "moveon-5b060",
+    "storage_bucket": "moveon-5b060.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61952355560:android:26c8c5e24dd070eb",
+        "android_client_info": {
+          "package_name": "com.example.abhi.moveon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "61952355560-pp6aio059mep5k4dsl61oc2od4brahk0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.abhi.moveon",
+            "certificate_hash": "ddc5964558a1bbff541d8142a65497cae8145b78"
+          }
+        },
+        {
+          "client_id": "61952355560-hq7hbsfb17e0qujlgjlnaqos1tjuirb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWoAFWGHxxXaFGuqrf8xeu91lQVy5Jgww"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "61952355560-hq7hbsfb17e0qujlgjlnaqos1tjuirb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
