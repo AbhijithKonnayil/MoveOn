@@ -17,6 +17,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,6 +31,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.FirebaseError;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.logging.Logger;
 
@@ -102,6 +109,18 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         //mMap.moveCamera(CameraUpdateFactory.zoomBy(10));
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("CustomerAvailable");
+        Log.e("CK Pt",userId);
+        Log.e("CK Pt 2",String.valueOf(ref));
+
+        GeoFire geoFire = new GeoFire(ref);
+
+        Log.e("CK Pt 2",String.valueOf(geoFire));
+        geoFire.setLocation(userId,new GeoLocation(location.getLatitude(),location.getLongitude()));
+
+        //geoFire.setLocation(userId, new GeoLocation(37.7853889, -122.4056973));
     }
 
     @Override
@@ -124,10 +143,6 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
 
     }
 
-
-
-
-
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -137,4 +152,15 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("MechanicAvailable");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId);
+    }
+
 }
