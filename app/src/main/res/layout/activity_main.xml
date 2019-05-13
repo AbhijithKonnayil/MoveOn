@@ -11,14 +11,12 @@
         android:layout_height="wrap_content"
         android:text="I am a Mechanic"
         android:id="@+id/mec_btn"
-        android:onClick="mechanicLogin()"
-        tools:ignore="OnClick" />
+        />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="I am a Rider"
         android:id="@+id/rider_btn"
-        android:onClick="riderLogin()"
-        tools:ignore="OnClick" />
+        />
 
 </LinearLayout>
