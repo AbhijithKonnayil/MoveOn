@@ -1,16 +1,21 @@
 package com.example.abhi.moveon;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,19 +54,38 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         Log.e("ck","1");
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
-        ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("Access Fine Loc",String.valueOf(Manifest.permission.ACCESS_FINE_LOCATION));
-            Log.e("Permission Granted",String.valueOf(PackageManager.PERMISSION_GRANTED));
-            Log.e("ACCESS COARSE LOCATION",String.valueOf( Manifest.permission.ACCESS_COARSE_LOCATION));
-            Log.e("ck","3");
-            return;
+
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+
+            }else{
+                checkLocationPermission();
+            }
         }
-        Log.e("ck","4");
         buildGoogleApiClient();
-        Log.e("ck","2");
         mMap.setMyLocationEnabled(true);
+    }
+
+
+    private void checkLocationPermission() {
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("give permission")
+                        .setMessage("give permission message")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(RiderMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                            }
+                        })
+                        .create()
+                        .show();
+            }
+            else{
+                ActivityCompat.requestPermissions(RiderMapActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            }
+        }
     }
 
     protected synchronized void buildGoogleApiClient(){
@@ -77,7 +101,7 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
         mLastLocation=location;
         LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(11));
+        //mMap.moveCamera(CameraUpdateFactory.zoomBy(10));
     }
 
     @Override
@@ -94,9 +118,9 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
         }
         //FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         //mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-        LocationServices.getFusedLocationProviderClient(this)
-                .requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-        //LocationServices.getFusedLocationProviderClient(this).requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        //LocationServices.getFusedLocationProviderClient(this)
+               // .requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
     }
 
