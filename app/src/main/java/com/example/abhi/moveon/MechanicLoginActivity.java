@@ -35,7 +35,7 @@ public class MechanicLoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    Intent intent = new Intent(MechanicLoginActivity.this,MapActivity.class);
+                    Intent intent = new Intent(MechanicLoginActivity.this,MechanicMapActivity.class);
                     startActivity(intent);
                     finish();
                     return;

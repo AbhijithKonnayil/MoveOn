@@ -6,7 +6,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="logout"/>
+        android:text="Logout"
+        android:id="@+id/logout"/>
+
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -15,4 +17,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".RiderMapActivity" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rent A Bike"
+            android:id="@+id/rent_btn"
+            android:onClick="rent"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search Mechanic"
+            android:id="@+id/call_mechanic_btn"/>
+    </LinearLayout>
 </FrameLayout>
