@@ -65,6 +65,12 @@ public class RentActivity extends AppCompatActivity {
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
+        Query query = FirebaseDatabase.getInstance()
+                .getReference()
+                .child("rental");
+        fetch(query);
+        adapter.startListening();
+
         searchEBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,7 +92,7 @@ public class RentActivity extends AppCompatActivity {
                 Query query = FirebaseDatabase.getInstance()
                         .getReference()
                         .child("rental")
-                        .orderByChild("rate").startAt(startR).endAt(endR);
+                        .orderByChild("engine").startAt(startE).endAt(endE);
                 fetch(query);
                 adapter.startListening();
             }
@@ -113,7 +119,7 @@ public class RentActivity extends AppCompatActivity {
                 Query query = FirebaseDatabase.getInstance()
                         .getReference()
                         .child("rental")
-                        .orderByChild("engine").startAt(startE).endAt(endE);
+                        .orderByChild("milage").startAt(startM).endAt(endM);
                 fetch(query);
                 adapter.startListening();
             }
@@ -137,7 +143,11 @@ public class RentActivity extends AppCompatActivity {
                 }
                 etstRate.setText("");
                 etedRate.setText("");
-                fetch("milage");
+                Query query = FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("rental")
+                        .orderByChild("rate").startAt(startR).endAt(endR);
+                fetch(query);
                 adapter.startListening();
             }
         });
@@ -149,21 +159,7 @@ public class RentActivity extends AppCompatActivity {
         super.onDestroy();
         adapter.stopListening();
     }
-    private void fetch(String searchType) {
-        if(searchType=="rate"){
-
-        }else if(searchType=="milage")
-        {   Query query = FirebaseDatabase.getInstance()
-                .getReference()
-                .child("rental")
-                .orderByChild("milage").startAt(startM).endAt(endM);
-
-        }else if(searchType=="engine"){
-
-        }
-        else{}
-
-
+    private void fetch(Query query) {
         FirebaseRecyclerOptions<Model> options =
                 new FirebaseRecyclerOptions.Builder<Model>()
                         .setQuery(query, new SnapshotParser<Model>() {
@@ -207,15 +203,10 @@ public class RentActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         makeCall(contact);
 
-                        Toast.makeText(RentActivity.this,"d",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RentActivity.this,"Calling Bike Owner",Toast.LENGTH_SHORT).show();
                     }
                 });
-                holder.root.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(RentActivity.this, String.valueOf(position), Toast.LENGTH_SHORT).show();
-                    }
-                });
+
             }
 
         };
