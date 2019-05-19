@@ -1,17 +1,11 @@
 package com.example.abhi.moveon;
 
 public class Model {
-    public String mId, mTitle, mDesc;
+    public String mId, contact;
     public String bikeName,company;
     public int rpd,model,cc,milage;
 
-/*
-    public Model(String id, String title, String desc) {
-
-    }
-*/
-
-    public Model(String mId,String bikeName, String company, int  rpd, int model, int milage,int cc) {
+    public Model(String mId,String bikeName, String company, int  rpd,int cc,int milage, int model,String contact) {
         this.mId = mId;
         this.bikeName = bikeName;
         this.company = company;
@@ -19,7 +13,9 @@ public class Model {
         this.model = model;
         this.cc = cc;
         this.milage=milage;
+        this.contact=contact;
     }
+
 
 
     public String getmId() {
@@ -76,5 +72,13 @@ public class Model {
 
     public void setMilage(int milage) {
         this.milage = milage;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 }

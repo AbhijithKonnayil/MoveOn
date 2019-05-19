@@ -2,12 +2,11 @@
 
 package com.example.abhi.moveon;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,44 +29,33 @@ import java.util.Map;
 
 public class LendActivity extends AppCompatActivity {
 
-    private EditText company,bikeName,rate,engine,milage,model;
-    private Button button,searchBtn;
+    private EditText company, bikeName, rate, engine, milage, model, contact;
+    public Button button, searchBtn, callButton;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private FirebaseRecyclerAdapter adapter;
-    int startRate=0,endRate=5000;
+    int startRate = 0, endRate = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lend);
-        company =findViewById(R.id.etbkCompany);
-        bikeName=findViewById(R.id.etbkName);
-        rate=findViewById(R.id.etratepd);
-        engine=findViewById(R.id.etengine);
-        milage=findViewById(R.id.etmilage);
-        model=findViewById(R.id.etmodel);
-        searchBtn=findViewById(R.id.search);
-
-
+        company = findViewById(R.id.etbkCompany);
+        bikeName = findViewById(R.id.etbkName);
+        rate = findViewById(R.id.etratepd);
+        engine = findViewById(R.id.etengine);
+        milage = findViewById(R.id.etmilage);
+        model = findViewById(R.id.etmodel);
         button = findViewById(R.id.btn);
+        contact = findViewById(R.id.etContact);
         recyclerView = findViewById(R.id.list);
-
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
+
         recyclerView.setHasFixedSize(true);
         fetch();
         adapter.startListening();
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startRate = Integer.valueOf(rate.getText().toString());
-                endRate = Integer.valueOf(engine.getText().toString());
-                fetch();
-                adapter.startListening();
-            }
-        });
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -80,7 +68,16 @@ public class LendActivity extends AppCompatActivity {
                 map.put("engine", Integer.parseInt(engine.getText().toString()));
                 map.put("milage", Integer.parseInt(milage.getText().toString()));
                 map.put("model", Integer.parseInt(model.getText().toString()));
+                map.put("contact", contact.getText().toString());
                 databaseReference.setValue(map);
+
+                company.setText("");
+                bikeName.setText("");
+                rate.setText("");
+                engine.setText("");
+                milage.setText("");
+                model.setText("");
+                contact.setText("");
 
             }
         });
@@ -90,7 +87,8 @@ public class LendActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //adapter.startListening();
+        adapter.startListening();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -98,10 +96,11 @@ public class LendActivity extends AppCompatActivity {
         super.onDestroy();
         adapter.stopListening();
     }
+
     private void fetch() {
         Query query = FirebaseDatabase.getInstance()
                 .getReference()
-                .child("rental").orderByChild("rate").startAt(startRate).endAt(endRate);
+                .child("rental");
 
         FirebaseRecyclerOptions<Model> options =
                 new FirebaseRecyclerOptions.Builder<Model>()
@@ -109,13 +108,14 @@ public class LendActivity extends AppCompatActivity {
                             @NonNull
                             @Override
                             public Model parseSnapshot(@NonNull DataSnapshot snapshot) {
-                                    return new Model(snapshot.child("id").getValue().toString(),
-                                            snapshot.child("name").getValue().toString(),
-                                            snapshot.child("company").getValue().toString(),
-                                            snapshot.child("rate").getValue(Integer.class),
-                                            snapshot.child("model").getValue(Integer.class),
-                                            snapshot.child("milage").getValue(Integer.class),
-                                            snapshot.child("engine").getValue(Integer.class));
+                                return new Model(snapshot.child("id").getValue().toString(),
+                                        snapshot.child("name").getValue().toString(),
+                                        snapshot.child("company").getValue().toString(),
+                                        snapshot.child("rate").getValue(Integer.class),
+                                        snapshot.child("engine").getValue(Integer.class),
+                                        snapshot.child("milage").getValue(Integer.class),
+                                        snapshot.child("model").getValue(Integer.class),
+                                        snapshot.child("contact").getValue().toString());
                             }
                         })
                         .build();
@@ -137,6 +137,7 @@ public class LendActivity extends AppCompatActivity {
                 holder.setTvRate(model.getRpd());
                 holder.setTvMilage(model.getMilage());
                 holder.setTvModel(model.getModel());
+                holder.setCallBtnInvisible();
 
                 holder.root.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -152,51 +153,48 @@ public class LendActivity extends AppCompatActivity {
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout root;
-        public TextView txtTitle;
-        public TextView txtDesc,tvCompany,tvName,tvRate,tvMilage,tvEngine,tvModel;
+        public TextView tvCompany, tvName, tvRate, tvMilage, tvEngine, tvModel;
 
         public ViewHolder(View itemView) {
             super(itemView);
             root = itemView.findViewById(R.id.list_root);
             tvCompany = itemView.findViewById(R.id.bkCompany);
-            tvName= itemView.findViewById(R.id.bkName);
-            tvRate= itemView.findViewById(R.id.ratepd);
-            tvMilage= itemView.findViewById(R.id.milage);
+            tvName = itemView.findViewById(R.id.bkName);
+            tvRate = itemView.findViewById(R.id.ratepd);
+            tvMilage = itemView.findViewById(R.id.milage);
             tvEngine = itemView.findViewById(R.id.engine);
             tvModel = itemView.findViewById(R.id.model);
-            //txtTitle = itemView.findViewById(R.id.list_title);
-            //txtDesc = itemView.findViewById(R.id.list_desc);
+            callButton = itemView.findViewById(R.id.callBtn);
+
         }
 
-       /* public void setTxtTitle(String string) {
-            txtTitle.setText(string);
-        }*/
+        public void setCallBtnInvisible() {
+            callButton.setVisibility(View.INVISIBLE);
+        }
 
-        public void setTvCompany(String string){
+        public void setTvCompany(String string) {
             tvCompany.setText(string);
         }
 
-        public void setTvName(String string){
+        public void setTvName(String string) {
             tvName.setText(string);
         }
 
-        public void setTvRate(String string){
+        public void setTvRate(String string) {
             tvRate.setText(string);
         }
 
-        public void setTvEngine(String string){
+        public void setTvEngine(String string) {
             tvEngine.setText(string);
         }
 
-        public void setTvModel(String string){
+        public void setTvModel(String string) {
             tvModel.setText(string);
         }
-        public void setTvMilage(String string){
+
+        public void setTvMilage(String string) {
             tvMilage.setText(string);
         }
-     /*   public void setTxtDesc(String string) {
-            txtDesc.setText(string);
-        }*/
     }
 }
 

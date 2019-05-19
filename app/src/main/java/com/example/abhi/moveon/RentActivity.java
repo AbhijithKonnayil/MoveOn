@@ -2,7 +2,16 @@
 
 package com.example.abhi.moveon;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Application;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,7 +40,8 @@ import java.util.Map;
 public class RentActivity extends AppCompatActivity {
 
     private EditText etstRate,etedRate,etstEngine,etedEngine,etstMilage,etedMilage;
-    private Button searchBtn;
+    public Button searchEBtn,searchMBtn,searchRBtn;
+    Boolean rentActivity=true;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private FirebaseRecyclerAdapter adapter;
@@ -47,15 +57,69 @@ public class RentActivity extends AppCompatActivity {
         etedEngine=findViewById(R.id.etEdEngine);
         etstMilage=findViewById(R.id.etStMilage);
         etedMilage=findViewById(R.id.etEdMilage);
-        searchBtn=findViewById(R.id.search);
-
+        searchRBtn=findViewById(R.id.searchR);
+        searchEBtn=findViewById(R.id.searchE);
+        searchMBtn=findViewById(R.id.searchM);
         recyclerView = findViewById(R.id.list);
 
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
+        searchEBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!etstEngine.getText().toString().trim().isEmpty()){
+                    startE = Integer.valueOf(etstEngine.getText().toString());
+                }
+                else{
+                    startE=0;
+                }
 
-        searchBtn.setOnClickListener(new View.OnClickListener() {
+                if(!etedEngine.getText().toString().trim().isEmpty()){
+                    endE = Integer.valueOf(etedEngine.getText().toString());
+                }
+                else{
+                    endE=5000;
+                }
+                etstEngine.setText("");
+                etedEngine.setText("");
+                Query query = FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("rental")
+                        .orderByChild("rate").startAt(startR).endAt(endR);
+                fetch(query);
+                adapter.startListening();
+            }
+        });
+
+        searchMBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!etstMilage.getText().toString().trim().isEmpty()){
+                    startM = Integer.valueOf(etstMilage.getText().toString());
+                }
+                else{
+                    startM=0;
+                }
+
+                if(!etedMilage.getText().toString().trim().isEmpty()){
+                    endM = Integer.valueOf(etedMilage.getText().toString());
+                }
+                else{
+                    endM=5000;
+                }
+                etstMilage.setText("");
+                etedMilage.setText("");
+                Query query = FirebaseDatabase.getInstance()
+                        .getReference()
+                        .child("rental")
+                        .orderByChild("engine").startAt(startE).endAt(endE);
+                fetch(query);
+                adapter.startListening();
+            }
+        });
+
+        searchRBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!etstRate.getText().toString().trim().isEmpty()){
@@ -71,36 +135,9 @@ public class RentActivity extends AppCompatActivity {
                 else{
                     endR=5000;
                 }
-
-                if(!etstEngine.getText().toString().trim().isEmpty()){
-                    startE = Integer.valueOf(etstEngine.getText().toString());
-                }
-                else{
-                    startE=0;
-                }
-
-                if(!etedEngine.getText().toString().trim().isEmpty()){
-                    endE = Integer.valueOf(etedEngine.getText().toString());
-                }
-                else{
-                    endE=5000;
-                }
-
-                if(!etstMilage.getText().toString().trim().isEmpty()){
-                    startM = Integer.valueOf(etstMilage.getText().toString());
-                }
-                else{
-                    startM=0;
-                }
-
-                if(!etedMilage.getText().toString().trim().isEmpty()){
-                    endM = Integer.valueOf(etedMilage.getText().toString());
-                }
-                else{
-                    endM=5000;
-                }
-                fetch();
-
+                etstRate.setText("");
+                etedRate.setText("");
+                fetch("milage");
                 adapter.startListening();
             }
         });
@@ -112,13 +149,20 @@ public class RentActivity extends AppCompatActivity {
         super.onDestroy();
         adapter.stopListening();
     }
-    private void fetch() {
-        Query query = FirebaseDatabase.getInstance()
+    private void fetch(String searchType) {
+        if(searchType=="rate"){
+
+        }else if(searchType=="milage")
+        {   Query query = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("rental")
-                .orderByChild("rate").startAt(startR).endAt(endR);
-        Toast.makeText(this,String.valueOf(query),Toast.LENGTH_SHORT);
-        Log.e("query", String.valueOf(query));
+                .orderByChild("milage").startAt(startM).endAt(endM);
+
+        }else if(searchType=="engine"){
+
+        }
+        else{}
+
 
         FirebaseRecyclerOptions<Model> options =
                 new FirebaseRecyclerOptions.Builder<Model>()
@@ -132,10 +176,13 @@ public class RentActivity extends AppCompatActivity {
                                         snapshot.child("rate").getValue(Integer.class),
                                         snapshot.child("engine").getValue(Integer.class),
                                         snapshot.child("milage").getValue(Integer.class),
-                                        snapshot.child("model").getValue(Integer.class));
+                                        snapshot.child("model").getValue(Integer.class),
+                                        snapshot.child("contact").getValue().toString()
+                                );
                             }
                         })
                         .build();
+
 
         adapter = new FirebaseRecyclerAdapter<Model, ViewHolder>(options) {
             @Override
@@ -150,11 +197,19 @@ public class RentActivity extends AppCompatActivity {
             protected void onBindViewHolder(ViewHolder holder, final int position, Model model) {
                 holder.setTvCompany(model.getCompany());
                 holder.setTvName(model.getBikeName());
-                holder.setTvEngine(model.getBikeName());
+                holder.setTvEngine(model.getCc());
                 holder.setTvRate(model.getRpd());
                 holder.setTvMilage(model.getMilage());
                 holder.setTvModel(model.getModel());
+                final String contact=model.getContact();
+                holder.callBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        makeCall(contact);
 
+                        Toast.makeText(RentActivity.this,"d",Toast.LENGTH_SHORT).show();
+                    }
+                });
                 holder.root.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -167,8 +222,41 @@ public class RentActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
     }
 
+    public void  makeCall(String contact){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) ==
+                PackageManager.PERMISSION_GRANTED)
+        {
+            contact = "tel:" + contact;
+            this.startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(contact)));
+        }
+        else{
+            checkCallPermission();
+        }
+    }
+
+    private void checkCallPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CALL_PHONE)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("give permission")
+                        .setMessage("give permission message")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(RentActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(RentActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+            }
+        }
+        this.startActivity(new Intent(Intent.ACTION_CALL, Uri.parse("tel:9495227127")));
+    }
     public class ViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout root;
+        public Button callBtn;
         public TextView txtTitle;
         public TextView txtDesc,tvCompany,tvName,tvRate,tvMilage,tvEngine,tvModel;
 
@@ -181,13 +269,8 @@ public class RentActivity extends AppCompatActivity {
             tvMilage= itemView.findViewById(R.id.milage);
             tvEngine = itemView.findViewById(R.id.engine);
             tvModel = itemView.findViewById(R.id.model);
-            //txtTitle = itemView.findViewById(R.id.list_title);
-            //txtDesc = itemView.findViewById(R.id.list_desc);
+            callBtn = itemView.findViewById(R.id.callBtn);
         }
-
-       /* public void setTxtTitle(String string) {
-            txtTitle.setText(string);
-        }*/
 
         public void setTvCompany(String string){
             tvCompany.setText(string);

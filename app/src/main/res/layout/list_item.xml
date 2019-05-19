@@ -36,8 +36,9 @@
                 android:id="@+id/bkName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Bike Name" />
+                android:text="Bike Name"
+                android:paddingLeft="5dp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <TextView
@@ -65,8 +66,13 @@
             android:id="@+id/model"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Milage :" />
+            android:layout_marginTop="4dp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Call"
+            android:id="@+id/callBtn"
+            />
 
 
     </LinearLayout>
