@@ -30,22 +30,6 @@ public class Model {
         this.mId = mId;
     }
 
-    public String getmTitle() {
-        return mTitle;
-    }
-
-    public void setmTitle(String mTitle) {
-        this.mTitle = mTitle;
-    }
-
-    public String getmDesc() {
-        return mDesc;
-    }
-
-    public void setmDesc(String mDesc) {
-        this.mDesc = mDesc;
-    }
-
     public String getBikeName() {
         return bikeName;
     }
@@ -63,7 +47,7 @@ public class Model {
     }
 
     public String getRpd() {
-        return String.valueOf(rpd);
+        return "Rate : "+String.valueOf(rpd);
     }
 
     public void setRpd(int rpd) {
@@ -71,7 +55,7 @@ public class Model {
     }
 
     public String getModel() {
-        return String.valueOf(model);
+        return "Model : " + String.valueOf(model);
     }
 
     public void setModel(int model) {
@@ -79,7 +63,7 @@ public class Model {
     }
 
     public String getCc() {
-        return String.valueOf(cc);
+        return "Engine CC :"+ String.valueOf(cc);
     }
 
     public void setCc(int cc) {
@@ -87,7 +71,7 @@ public class Model {
     }
 
     public String getMilage() {
-        return String.valueOf(milage);
+        return "Milage : "+ String.valueOf(milage);
     }
 
     public void setMilage(int milage) {

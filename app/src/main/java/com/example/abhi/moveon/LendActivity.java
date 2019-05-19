@@ -102,8 +102,6 @@ public class LendActivity extends AppCompatActivity {
         Query query = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("rental").orderByChild("rate").startAt(startRate).endAt(endRate);
-        Toast.makeText(this,String.valueOf(query),Toast.LENGTH_SHORT);
-        Log.e("query", String.valueOf(query));
 
         FirebaseRecyclerOptions<Model> options =
                 new FirebaseRecyclerOptions.Builder<Model>()
@@ -115,9 +113,9 @@ public class LendActivity extends AppCompatActivity {
                                             snapshot.child("name").getValue().toString(),
                                             snapshot.child("company").getValue().toString(),
                                             snapshot.child("rate").getValue(Integer.class),
-                                            snapshot.child("engine").getValue(Integer.class),
+                                            snapshot.child("model").getValue(Integer.class),
                                             snapshot.child("milage").getValue(Integer.class),
-                                            snapshot.child("model").getValue(Integer.class));
+                                            snapshot.child("engine").getValue(Integer.class));
                             }
                         })
                         .build();
@@ -135,7 +133,7 @@ public class LendActivity extends AppCompatActivity {
             protected void onBindViewHolder(ViewHolder holder, final int position, Model model) {
                 holder.setTvCompany(model.getCompany());
                 holder.setTvName(model.getBikeName());
-                holder.setTvEngine(model.getBikeName());
+                holder.setTvEngine(model.getCc());
                 holder.setTvRate(model.getRpd());
                 holder.setTvMilage(model.getMilage());
                 holder.setTvModel(model.getModel());

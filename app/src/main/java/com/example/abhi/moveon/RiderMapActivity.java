@@ -324,6 +324,9 @@ public class RiderMapActivity extends FragmentActivity implements OnMapReadyCall
     }
 
     public void rent(View view){
+        startActivity(new Intent(this,RentActivity.class));
+    }
+    public void lend(View view){
         startActivity(new Intent(this,LendActivity.class));
     }
 

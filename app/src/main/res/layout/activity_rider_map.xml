@@ -25,6 +25,12 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Lend My Bike"
+            android:id="@+id/lend_btn"
+            android:onClick="lend"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Rent A Bike"
             android:id="@+id/rent_btn"
             android:onClick="rent"/>
